@@ -253,9 +253,38 @@ Basic, Ruby, Swift.
         File("temp.html").delete()
     }
 
+    private fun check() {
+        markdownToHtmlSimple("test/lesson7/task1/input_9.txt", "test/lesson7/task1/output_9.html")
+        File("test/lesson7/task1/expected_9.txt").bufferedReader().use { expected ->
+            File("test/lesson7/task1/output_9.html").bufferedReader().use { output ->
+                var line = ""
+                var pos = 0
+                while (true) {
+                    val expectedChar = expected.read()
+                    val outputChar = output.read()
+                    if (expectedChar == -1 && outputChar == -1)
+                        return
+                    if (expectedChar != outputChar)
+                        throw Exception("Expected: ${expectedChar.toChar()}, got: ${outputChar.toChar()};\nIn line ${line}; \npos $pos")
+
+                    if (expectedChar != '\n'.code) {
+                        line += expectedChar.toChar()
+                        pos++
+                    } else {
+                        line = ""
+                        pos = 0
+                    }
+
+                }
+
+            }
+        }
+    }
+
     @Test
     @Tag("22")
     fun markdownToHtmlSimple() {
+        check()
         markdownToHtmlSimple("input/markdown_simple.md", "temp.html")
         checkHtmlSimpleExample()
     }
@@ -311,6 +340,7 @@ Basic, Ruby, Swift.
     @Test
     @Tag("23")
     fun markdownToHtmlLists() {
+//        check()
         markdownToHtmlLists("input/markdown_lists.md", "temp.html")
         checkHtmlListsExample()
     }
@@ -442,3 +472,4 @@ Basic, Ruby, Swift.
         File("temp.txt").delete()
     }
 }
+
